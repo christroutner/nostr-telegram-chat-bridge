@@ -40,7 +40,15 @@ class TelegramController {
         }
       }
     })
-    this.bot.onText(/\/q/, this.processMsg)
+    // this.bot.onText(/\/q/, this.processMsg)
+
+    this.bot.on('message', async (msg) => {
+      console.log('Bot received direct message: ', JSON.stringify(msg, null, 2))
+
+      const content = `From ${msg.from.username}: ${msg.text}`
+
+      await this.adapters.nostr.postMessage({ content })
+    })
   }
 
   // Triggers when a user prefaces a message with /q.

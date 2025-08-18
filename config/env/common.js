@@ -156,7 +156,7 @@ export default {
   // END IPFS CONFIGURATION
 
   // Telegram Bot Configuration
-  telegramBotToken: process.env.TELEGRAM_BOT_TOKEN ? process.env.TELEGRAM_BOT_TOKEN : '',
+  telegramBotToken: process.env.BOTTELEGRAMTOKEN ? process.env.BOTTELEGRAMTOKEN : '',
 
   // Ollama Configuration
   ollamaUrl: process.env.OLLAMA_URL ? process.env.OLLAMA_URL : 'http://192.168.2.117:11434',
