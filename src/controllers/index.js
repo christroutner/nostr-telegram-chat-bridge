@@ -14,6 +14,7 @@ import RESTControllers from './rest-api/index.js'
 import TimerControllers from './timer-controllers.js'
 import config from '../../config/index.js'
 import TelegramController from './telegram/index.js'
+import NostrController from './nostr-controller.js'
 
 class Controllers {
   constructor (localConfig = {}) {
@@ -23,6 +24,8 @@ class Controllers {
     this.timerControllers = new TimerControllers({ adapters: this.adapters, useCases: this.useCases })
     this.config = config
     this.telegramController = new TelegramController({ adapters: this.adapters, useCases: this.useCases })
+    this.nostrController = new NostrController({ adapters: this.adapters, useCases: this.useCases })
+
     // Bind 'this' object to all subfunction
     this.initAdapters = this.initAdapters.bind(this)
     this.initUseCases = this.initUseCases.bind(this)
@@ -65,6 +68,12 @@ class Controllers {
 
     // Attach and start the timer controllers
     this.timerControllers.startTimers()
+
+    // Attach the Nostr controller and start monitoring the chat room.
+    this.nostrController.startNostrMonitor()
+
+    // Attach the Telegram controller and start monitoring the chat room.
+    this.telegramController.startTelegramBot()
   }
 
   // Add the JSON RPC router to the ipfs-coord adapter.

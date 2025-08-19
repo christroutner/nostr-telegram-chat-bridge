@@ -3,7 +3,7 @@
 */
 
 // Public npm libraries
-import TelegramBot from 'node-telegram-bot-api'
+// import TelegramBot from 'node-telegram-bot-api'
 
 // Private libraries
 import config from '../../../config/index.js'
@@ -28,51 +28,25 @@ class TelegramController {
     }
 
     // Bind 'this' object to all methods.
+    this.startTelegramBot = this.startTelegramBot.bind(this)
     this.processMsg = this.processMsg.bind(this)
+  }
 
-    // Initialize the bot.
-    this.bot = new TelegramBot(config.telegramBotToken, {
-      polling: true,
-      request: {
-        agentOptions: {
-          keepAlive: true,
-          family: 4
-        }
-      }
-    })
-    // this.bot.onText(/\/q/, this.processMsg)
+  startTelegramBot () {
+    this.bot = this.adapters.telegram.initBot()
 
-    this.bot.on('message', async (msg) => {
+    // Process any messages in the chat room.
+    this.bot.on('message', this.processMsg)
+  }
+
+  // Process any messages in the chat room by forwarding it on to Nostr.
+  async processMsg (msg) {
+    try {
       console.log('Bot received direct message: ', JSON.stringify(msg, null, 2))
 
       const content = `From @${msg.from.username}:\n\n${msg.text}`
 
       await this.adapters.nostr.postMessage({ content })
-    })
-  }
-
-  // Triggers when a user prefaces a message with /q.
-  async processMsg (msg) {
-    try {
-      console.log('controllers/telegram/index.js/processMsg() received message:', msg)
-
-      const rawMsg = msg.text
-      const parsedMsg = rawMsg.slice(3) // Remove the /q prefix.
-      console.log('parsedMsg: ', parsedMsg)
-
-      const response = await this.useCases.bot.handleIncomingPrompt({ prompt: parsedMsg, telegramMsg: msg })
-
-      // console.log('Original Telegram msg: ', msg)
-
-      // const chatId = msg.chat.id
-      // console.log('chatId: ', chatId)
-      // this.bot.sendMessage(chatId, response)
-
-      const opts = {
-        reply_to_message_id: msg.message_id
-      }
-
-      this.bot.sendMessage(msg.chat.id, response, opts)
     } catch (error) {
       console.error('Error in processMsg:', error)
 
