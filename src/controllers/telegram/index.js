@@ -1,5 +1,5 @@
 /*
-  This file is the main entry point for the Telegram bot.
+  This controller library reacts to messages coming in to the Telegram.
 */
 
 // Public npm libraries
@@ -45,7 +45,7 @@ class TelegramController {
     this.bot.on('message', async (msg) => {
       console.log('Bot received direct message: ', JSON.stringify(msg, null, 2))
 
-      const content = `From ${msg.from.username}: ${msg.text}`
+      const content = `From @${msg.from.username}:\n\n${msg.text}`
 
       await this.adapters.nostr.postMessage({ content })
     })
