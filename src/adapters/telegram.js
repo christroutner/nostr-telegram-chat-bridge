@@ -45,6 +45,12 @@ class TelegramAdapter {
       const { message } = inObj
       console.log('message: ', message)
 
+      // Ignore if the message originated from the bot.
+      const botPubKey = process.env.BOT_NOSTR_PUB_KEY
+      if (message.pubkey === botPubKey) {
+        return
+      }
+
       // Create pubkey summary
       // TODO: convert from pubkey to npub.
       const firstFourCharacters = message.pubkey.substring(0, 4)
